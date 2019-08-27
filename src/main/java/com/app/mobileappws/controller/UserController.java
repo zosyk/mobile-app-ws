@@ -1,5 +1,6 @@
 package com.app.mobileappws.controller;
 
+import com.app.mobileappws.model.response.UpdateUser;
 import com.app.mobileappws.model.response.User;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -43,14 +44,24 @@ public class UserController {
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
-    @PutMapping
-    public String updateUser() {
-        return "update user was called";
+    @PutMapping(path = "/{id}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
+            consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    public ResponseEntity<User> updateUser(@PathVariable String id, @Valid @RequestBody UpdateUser updateUser) {
+
+        if(!users.containsKey(id)) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        User user = users.get(id);
+        user.setFirstname(updateUser.getFirstname());
+        user.setLastname(updateUser.getLastname());
+
+        return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
 
     @DeleteMapping(path = "/{id}")
-    public ResponseEntity deleteUser(@PathVariable String id) {
+    public ResponseEntity deleteUser(@PathVariable String id, @Valid @RequestBody User user) {
         if(!users.containsKey(id)) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
