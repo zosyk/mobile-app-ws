@@ -16,7 +16,7 @@ import java.util.UUID;
 @RequestMapping("/users")
 public class UserController {
 
-    private static final Map<String, User> users = new HashMap<>();
+    private static  Map<String, User> users = new HashMap<>();
 
     @GetMapping
     public String getUsers(@RequestParam(value = "page", defaultValue = "1") int page,
@@ -27,7 +27,7 @@ public class UserController {
 
     @GetMapping(path = "/{id}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<User> getUser(@PathVariable String id) {
-
+        users = null;
         if(!users.containsKey(id)) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
@@ -61,7 +61,7 @@ public class UserController {
 
 
     @DeleteMapping(path = "/{id}")
-    public ResponseEntity deleteUser(@PathVariable String id, @Valid @RequestBody User user) {
+    public ResponseEntity<Void> deleteUser(@PathVariable String id, @Valid @RequestBody User user) {
         if(!users.containsKey(id)) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
