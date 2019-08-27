@@ -1,10 +1,17 @@
 package com.app.mobileappws.model.response;
 
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotNull;
+
 public class User {
+    @NotNull
     private String firstname;
+    @NotNull
     private String lastname;
+    @NotNull
+    @Email
     private String email;
-    private String userId;
+    private String id;
 
     public String getFirstname() {
         return firstname;
@@ -30,11 +37,11 @@ public class User {
         this.email = email;
     }
 
-    public String getUserId() {
-        return userId;
+    public String getId() {
+        return id;
     }
 
-    public void setUserId(String userId) {
-        this.userId = userId;
+    public void setId(String id) {
+        this.id = id;
     }
 }

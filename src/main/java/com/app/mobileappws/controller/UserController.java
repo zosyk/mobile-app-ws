@@ -1,12 +1,21 @@
 package com.app.mobileappws.controller;
 
 import com.app.mobileappws.model.response.User;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/users")
 public class UserController {
 
+    private static final Map<String, User> users = new HashMap<>();
 
     @GetMapping
     public String getUsers(@RequestParam(value = "page", defaultValue = "1") int page,
@@ -15,19 +24,23 @@ public class UserController {
         return "get users was called with page = " + page + " and limit = " + limit + " , and sort: " + sort;
     }
 
-    @GetMapping(path = "/{userId}")
-    public User getUser(@PathVariable int userId) {
+    @GetMapping(path = "/{id}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    public ResponseEntity<User> getUser(@PathVariable String id) {
 
-        User user = new User();
-        user.setFirstname("Sergey");
-        user.setLastname("Blalb");
+        if(!users.containsKey(id)) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
 
-        return user;
+        return new ResponseEntity<>(users.get(id), HttpStatus.OK);
     }
 
     @PostMapping
-    public String createUser() {
-        return "create user was called";
+    public ResponseEntity<User> createUser(@Valid @RequestBody User user) {
+        user.setId(UUID.randomUUID().toString());
+
+        users.put(user.getId(), user);
+
+        return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
     @PutMapping
@@ -36,9 +49,15 @@ public class UserController {
     }
 
 
-    @DeleteMapping
-    public String deleteUser() {
-        return "delete user was called";
+    @DeleteMapping(path = "/{id}")
+    public ResponseEntity deleteUser(@PathVariable String id) {
+        if(!users.containsKey(id)) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        users.remove(id);
+
+        return ResponseEntity.noContent().build();
     }
 
 }
